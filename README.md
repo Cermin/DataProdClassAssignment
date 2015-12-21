@@ -1,6 +1,6 @@
 # Data Product Class Project
 This is the final project for the Data Products Class and requires a shiny app to be built to visually present the data.
-A slide presentation that explains what the shiny app does.  The presentation itself will have a link to the shiny app 
+The assignment requires a slide presentation that explains what the shiny app does .  The presentation itself will have a link to the shiny app 
 and to my git hub account for the server.r and ui.r code that I wrote for my shiny app.
 
 I chose the USArrest dataset from the dataset library in R.  This dataset contains statistics, in arrests per 100,000 residents 
