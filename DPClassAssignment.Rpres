@@ -1,0 +1,89 @@
+Violent Crime Rates in US 
+========================================================
+author: Usha Morris 
+date: `r format(Sys.Date(), format="%B %d, %Y")`
+
+
+Data : USArrest Dataset 
+========================================================
+US violent crime rates data is for 1973 for 50 states in the US:
+
+- crime rate is per 100,000 people
+- % of urban population 
+
+
+
+User Interactive Shiny App for US Crime Data
+========================================================
+User is able to view the type of violent crime rates in US and their relationship
+to urban population:
+
+- <div style="color:red">Murder</div>
+- <div style="color:red">Assault</div>
+- <div style="color:red">Rape</div>
+- <div style="color:red">All Three Above</div>
+
+
+Cool Visuals : Interactive Choropleth Maps
+========================================================
+- The choropleth map provides an easy way to visualize how a measurement varies 
+across a geographic area.
+```{r, echo=FALSE,fig.width=8,fig.height=4.5,dpi=300,out.width="1920px",height="1080px"}
+library(maps)      # required for map_data function
+library(datasets)  # required for USArrest dataset
+library(ggplot2)
+
+crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
+states_map <- map_data("state")
+snames <- aggregate(cbind(long, lat) ~ region, data=states_map, 
+                                FUN=function(x) mean(range(x)))
+            
+            
+            #state.abb data set has the abbreviations for the state.
+            sabb<-state.abb
+            
+            # remove Alaska and Hawaii from the list
+            drop <-c("AK","HI")
+            sabb <-sabb[ - which(sabb %in% drop)]
+            
+            #add DC to the state abbreviation to match the order in snames
+            sabb<- append(sabb,"DC",7)
+           
+            
+            # add the state abbreviation as a column to snames
+            snames_new <-cbind(snames,sabb)
+            
+            # rename the sabb column so we can use the column name and not confuse
+            # using the sabb vector as well as the column region to state
+            colnames(snames_new)[4] <- "StateAbb"
+            colnames(snames_new)[1] <- "state"  
+            
+           
+            
+            #plot the graph based on the values selected.
+            gg <- ggplot(crimes, aes(map_id=state), environment=environment()) 
+            gg <- gg + geom_map(aes(fill = Murder), 
+                        map = states_map) +
+                        expand_limits(x = states_map$long, y = states_map$lat) + 
+                        theme(legend.position = "bottom",
+                            axis.ticks = element_blank(), 
+                            axis.title = element_blank(), 
+                            axis.text =  element_blank()) +
+                        scale_fill_gradient(low="white", high= "red", 
+                                            name = "Per 100,000 People") + 
+                        guides(fill = guide_colorbar(barwidth = 10, 
+                                                     barheight = .5)) +  
+                       ggtitle(paste0("Choropleth US Crime for Murder")) +
+                      geom_text(data=snames_new, aes(long, lat, label = StateAbb),
+                                size=3) 
+                                 
+            print(gg)
+```
+
+Ready for the Crime Rate App?
+========================================================
+
+- My shiny app for US Crime rate can be viewed **[here](https://cermin.shinyapps.io/ShinyApp)**.
+- Code for the app (server.r and ui.r) can be viewed from my account in **[Github](https://github.com/Cermin/DataProdClassAssignment.git)**.
+- Documentation to get started on the US Crime Rate App is included in the app.
+
